@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
+const { connectionMongoDb } = require("./src/db");
 const { HttpCode } = require("./src/HttpCode");
 const contactsRouter = require("./routes/api/contacts.js");
-
 const app = express();
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
@@ -21,5 +22,11 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   res.status(HttpCode.Internal_Server_Error).json({ message: err.message });
 });
+
+const start = async () => {
+  await connectionMongoDb();
+};
+
+start();
 
 module.exports = app;

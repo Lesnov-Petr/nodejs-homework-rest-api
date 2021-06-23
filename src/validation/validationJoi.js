@@ -9,6 +9,7 @@ const schema = Joi.object({
     minDomainSegments: 2,
     tlds: { allow: ["com", "net"] },
   }),
+  favorite: Joi.boolean().required(),
 });
 
 const getErrorValidation = async (error, statusCode, res) => {

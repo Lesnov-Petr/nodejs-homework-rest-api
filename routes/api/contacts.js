@@ -13,6 +13,7 @@ router
   .get("/:id", getContactById)
   .delete("/:id", removeContact)
   .post("/", addContact)
-  .put("/:id", updateContact);
+  .put("/:id", updateContact)
+  .patch("/:id", updateContact);
 
 module.exports = router;

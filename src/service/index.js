@@ -1,15 +1,15 @@
 const {
-  getReadJSON,
+  getData,
   getFindByID,
-  getFilterByID,
-  getWriteFile,
+  getDeletContact,
+  getAddContact,
   getUpdateContact,
 } = require("./service");
 
 module.exports = {
-  getReadJSON,
+  getData,
   getFindByID,
-  getFilterByID,
-  getWriteFile,
+  getAddContact,
+  getDeletContact,
   getUpdateContact,
 };

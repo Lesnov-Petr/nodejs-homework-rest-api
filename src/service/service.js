@@ -1,45 +1,40 @@
-/* eslint-disable array-callback-return */
-const fs = require("fs").promises;
+const { Contact } = require("../db");
 
-const getReadJSON = async (srcJSON) => {
-  const dataJSON = await fs.readFile(srcJSON, "utf8");
-  const data = JSON.parse(dataJSON);
-  return data;
+const getData = async () => {
+  const Contacts = await Contact.find({});
+  return Contacts;
 };
 
-const getFindByID = async (data, reqID) => {
-  return data.find(({ id }) => `${id}` === reqID);
+const getFindByID = async (req) => {
+  const { id } = req.params;
+  const contact = await Contact.findById(id);
+  return contact;
 };
 
-const getFilterByID = async (data, reqID) => {
-  return data.filter(({ id }) => `${id}` !== reqID);
+const getDeletContact = async (req) => {
+  const { id } = req.params;
+  await Contact.findByIdAndDelete(id);
 };
 
-const getWriteFile = async (path, data) => {
-  return fs.writeFile(path, JSON.stringify(data), "utf8");
+const getAddContact = async (req, newContact) => {
+  const contact = new Contact(newContact);
+  await contact.save();
 };
 
-const getUpdateContact = async (req, contactsPath) => {
-  const contacts = await getReadJSON(contactsPath);
-  let isContactUpdate;
-  contacts.find(({ id }, index) => {
-    if (String(id) === String(req.params.id)) {
-      contacts[index] = {
-        ...contacts[index],
-        ...req.body,
-      };
-      getWriteFile(contactsPath, contacts);
-      isContactUpdate = contacts[index];
-    }
+const getUpdateContact = async (req) => {
+  const paramBody = req.body;
+  const { id } = req.params;
+  const isResultUpdate = await Contact.findByIdAndUpdate(id, {
+    $set: { ...paramBody },
   });
-
+  const isContactUpdate = isResultUpdate ? getFindByID(req) : null;
   return isContactUpdate;
 };
 
 module.exports = {
-  getReadJSON,
+  getData,
   getFindByID,
-  getFilterByID,
-  getWriteFile,
+  getAddContact,
+  getDeletContact,
   getUpdateContact,
 };

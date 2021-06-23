@@ -1,18 +1,16 @@
-const path = require("path");
-const contactsPath = path.resolve("./model/contacts.json");
 const { HttpCode } = require("../HttpCode");
 const { schema, getErrorValidation } = require("../validation");
 const {
-  getReadJSON,
+  getData,
   getFindByID,
-  getFilterByID,
-  getWriteFile,
+  getDeletContact,
+  getAddContact,
   getUpdateContact,
 } = require("../service");
 
 const listContacts = async (req, res, next) => {
   try {
-    const contacts = await getReadJSON(contactsPath);
+    const contacts = await getData(req);
     return res.json({
       contacts,
       status: HttpCode.OK,
@@ -24,8 +22,7 @@ const listContacts = async (req, res, next) => {
 
 const getContactById = async (req, res, next) => {
   try {
-    const contacts = await getReadJSON(contactsPath);
-    const contact = await getFindByID(contacts, req.params.id);
+    const contact = await getFindByID(req);
     contact
       ? res.json({ contact, status: HttpCode.OK })
       : res.json({ message: "Not found", status: HttpCode.NOT_FOUND });
@@ -36,11 +33,9 @@ const getContactById = async (req, res, next) => {
 
 const removeContact = async (req, res, next) => {
   try {
-    const contacts = await getReadJSON(contactsPath);
-    const getContactDel = await getFindByID(contacts, req.params.id);
+    const getContactDel = await getFindByID(req);
     if (getContactDel) {
-      const isNewListContacts = await getFilterByID(contacts, req.params.id);
-      await getWriteFile(contactsPath, isNewListContacts);
+      await getDeletContact(req);
       return res.json({
         message: `contact ${JSON.stringify(getContactDel)} deleted`,
         status: HttpCode.OK,
@@ -60,18 +55,15 @@ const addContact = async (req, res, next) => {
       getErrorValidation(error, HttpCode.BAD_REQUEST, res);
     }
 
-    const { name, phone, email } = req.body;
+    const { name, phone, email, favorite } = req.body;
 
     const newContact = {
-      id: Date.now(),
       name: name,
       phone: phone,
       email: email,
+      favorite: favorite,
     };
-
-    const contacts = await getReadJSON(contactsPath);
-    contacts.push(newContact);
-    await getWriteFile(contactsPath, contacts);
+    await getAddContact(req, newContact);
     return res.json({ newContact, status: HttpCode.CREATED });
   } catch (error) {
     next(error);
@@ -92,7 +84,32 @@ const updateContact = async (req, res, next) => {
       await getErrorValidation(error, HttpCode.BAD_REQUEST, res);
     }
 
-    const isContactUpdate = await getUpdateContact(req, contactsPath);
+    const isContactUpdate = await getUpdateContact(req);
+    const response = isContactUpdate
+      ? res.json({ isContactUpdate, message: HttpCode.OK })
+      : res.json({ message: "Not Found", status: HttpCode.NOT_FOUND });
+
+    return response;
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateContactStatus = async (req, res, next) => {
+  try {
+    if (Object.keys(req.body).length === 0) {
+      return res.json({
+        message: "missing fields",
+        status: HttpCode.BAD_REQUEST,
+      });
+    }
+
+    const { error } = schema.validate(req.body);
+    if (error) {
+      await getErrorValidation(error, HttpCode.BAD_REQUEST, res);
+    }
+
+    const isContactUpdate = await getUpdateContact(req);
     const response = isContactUpdate
       ? res.json({ isContactUpdate, message: HttpCode.OK })
       : res.json({ message: "Not Found", status: HttpCode.NOT_FOUND });
