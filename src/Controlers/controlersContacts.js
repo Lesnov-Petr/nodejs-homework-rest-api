@@ -95,31 +95,6 @@ const updateContact = async (req, res, next) => {
   }
 };
 
-const updateContactStatus = async (req, res, next) => {
-  try {
-    if (Object.keys(req.body).length === 0) {
-      return res.json({
-        message: "missing fields",
-        status: HttpCode.BAD_REQUEST,
-      });
-    }
-
-    const { error } = schema.validate(req.body);
-    if (error) {
-      await getErrorValidation(error, HttpCode.BAD_REQUEST, res);
-    }
-
-    const isContactUpdate = await getUpdateContact(req);
-    const response = isContactUpdate
-      ? res.json({ isContactUpdate, message: HttpCode.OK })
-      : res.json({ message: "Not Found", status: HttpCode.NOT_FOUND });
-
-    return response;
-  } catch (error) {
-    next(error);
-  }
-};
-
 module.exports = {
   listContacts,
   getContactById,

@@ -23,6 +23,8 @@ app.use((err, req, res, next) => {
   res.status(HttpCode.Internal_Server_Error).json({ message: err.message });
 });
 
+app.use();
+
 const start = async () => {
   await connectionMongoDb();
 };
