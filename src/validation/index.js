@@ -1,3 +1,4 @@
-const { schema, getErrorValidation } = require("./validationJoi");
+const { schema, schemaAuth, getErrorValidation } = require("./validationJoi");
+const { NotAuthorizedError } = require("./error");
 
-module.exports = { schema, getErrorValidation };
+module.exports = { schema, schemaAuth, getErrorValidation, NotAuthorizedError };

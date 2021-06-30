@@ -20,4 +20,15 @@ const getErrorValidation = async (error, statusCode, res) => {
   });
 };
 
-module.exports = { schema, getErrorValidation };
+const schemaAuth = Joi.object({
+  email: Joi.string().email({
+    minDomainSegments: 2,
+    tlds: { allow: ["com", "net"] },
+  }),
+
+  password: Joi.string().min(6).max(15).required(),
+
+  subscription: Joi.string(),
+});
+
+module.exports = { schema, schemaAuth, getErrorValidation };
