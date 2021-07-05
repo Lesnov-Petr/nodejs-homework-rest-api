@@ -10,7 +10,8 @@ const {
 
 const listContacts = async (req, res, next) => {
   try {
-    const contacts = await getData(req);
+    const { _id } = req.user;
+    const contacts = await getData(_id);
     return res.json({
       contacts,
       status: HttpCode.OK,
@@ -22,7 +23,9 @@ const listContacts = async (req, res, next) => {
 
 const getContactById = async (req, res, next) => {
   try {
-    const contact = await getFindByID(req);
+    const { _id: userId } = req.user;
+    const { id: contactId } = req.params;
+    const contact = await getFindByID(contactId, userId);
     contact
       ? res.json({ contact, status: HttpCode.OK })
       : res.json({ message: "Not found", status: HttpCode.NOT_FOUND });
@@ -33,9 +36,12 @@ const getContactById = async (req, res, next) => {
 
 const removeContact = async (req, res, next) => {
   try {
-    const getContactDel = await getFindByID(req);
+    const { _id: userId } = req.user;
+    const { id: contactId } = req.params;
+
+    const getContactDel = await getFindByID(contactId, userId);
     if (getContactDel) {
-      await getDeletContact(req);
+      await getDeletContact(contactId, userId);
       return res.json({
         message: `contact ${JSON.stringify(getContactDel)} deleted`,
         status: HttpCode.OK,
@@ -55,6 +61,8 @@ const addContact = async (req, res, next) => {
       getErrorValidation(error, HttpCode.BAD_REQUEST, res);
     }
 
+    const { _id: userId } = req.user;
+
     const { name, phone, email, favorite } = req.body;
 
     const newContact = {
@@ -62,8 +70,9 @@ const addContact = async (req, res, next) => {
       phone: phone,
       email: email,
       favorite: favorite,
+      userId: userId,
     };
-    await getAddContact(req, newContact);
+    await getAddContact(newContact);
     return res.json({ newContact, status: HttpCode.CREATED });
   } catch (error) {
     next(error);
@@ -72,6 +81,7 @@ const addContact = async (req, res, next) => {
 
 const updateContact = async (req, res, next) => {
   try {
+    const { _id: userId } = req.user;
     if (Object.keys(req.body).length === 0) {
       return res.json({
         message: "missing fields",
@@ -84,7 +94,7 @@ const updateContact = async (req, res, next) => {
       await getErrorValidation(error, HttpCode.BAD_REQUEST, res);
     }
 
-    const isContactUpdate = await getUpdateContact(req);
+    const isContactUpdate = await getUpdateContact(req, userId);
     const response = isContactUpdate
       ? res.json({ isContactUpdate, message: HttpCode.OK })
       : res.json({ message: "Not Found", status: HttpCode.NOT_FOUND });

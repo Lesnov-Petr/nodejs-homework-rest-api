@@ -15,8 +15,6 @@ const login = async (req) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
-  console.log(user);
-
   if (!user) {
     throw new NotAuthorizedError(`No user with email ${email} found`);
   }

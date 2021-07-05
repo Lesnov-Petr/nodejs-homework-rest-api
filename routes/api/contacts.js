@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { authMiddleware } = require("../../src/middlewares");
 const {
   listContacts,
   getContactById,
@@ -7,6 +8,8 @@ const {
   addContact,
   updateContact,
 } = require("../../src/Controlers");
+
+router.use(authMiddleware);
 
 router
   .get("/", listContacts)

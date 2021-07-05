@@ -1,33 +1,34 @@
 const { Contact } = require("../db");
 
-const getData = async () => {
-  const Contacts = await Contact.find({});
+const getData = async (userId) => {
+  const Contacts = await Contact.find({ userId });
   return Contacts;
 };
 
-const getFindByID = async (req) => {
-  const { id } = req.params;
-  const contact = await Contact.findById(id);
+const getFindByID = async (contactId, userId) => {
+  const contact = await Contact.findOne({ _id: contactId, userId });
   return contact;
 };
 
-const getDeletContact = async (req) => {
-  const { id } = req.params;
-  await Contact.findByIdAndDelete(id);
+const getDeletContact = async (contactId, userId) => {
+  await Contact.findOneAndRemove({ _id: contactId, userId });
 };
 
-const getAddContact = async (req, newContact) => {
+const getAddContact = async (newContact) => {
   const contact = new Contact(newContact);
   await contact.save();
 };
 
-const getUpdateContact = async (req) => {
+const getUpdateContact = async (req, userId) => {
   const paramBody = req.body;
   const { id } = req.params;
-  const isResultUpdate = await Contact.findByIdAndUpdate(id, {
-    $set: { ...paramBody },
-  });
-  const isContactUpdate = isResultUpdate ? getFindByID(req) : null;
+  const isResultUpdate = await Contact.findOneAndUpdate(
+    { _id: id, userId },
+    {
+      $set: { ...paramBody },
+    }
+  );
+  const isContactUpdate = isResultUpdate ? getFindByID(id, userId) : null;
   return isContactUpdate;
 };
 
