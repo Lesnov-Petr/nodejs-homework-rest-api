@@ -10,8 +10,11 @@ const {
 
 const listContacts = async (req, res, next) => {
   try {
+    let { skip = 0, limit = 5 } = req.query;
+    limit = parseInt(limit) > 5 ? 5 : parseInt(limit);
+    skip = parseInt(skip);
     const { _id } = req.user;
-    const contacts = await getData(_id);
+    const contacts = await getData(_id, skip, limit);
     return res.json({
       contacts,
       status: HttpCode.OK,

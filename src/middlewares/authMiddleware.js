@@ -2,7 +2,7 @@ const jsonwebtoken = require("jsonwebtoken");
 const { NotAuthorizedError } = require("../validation");
 
 const authMiddleware = (req, res, next) => {
-  const [tokenType, token] = req.headers["authorization"].split(" ");
+  const [, token] = req.headers["authorization"].split(" ");
 
   console.log(token);
 

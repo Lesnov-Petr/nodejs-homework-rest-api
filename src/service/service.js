@@ -1,7 +1,10 @@
 const { Contact } = require("../db");
 
-const getData = async (userId) => {
-  const Contacts = await Contact.find({ userId });
+const getData = async (userId, skip, limit) => {
+  const Contacts = await Contact.find({ userId })
+    .select({ __v: 0 })
+    .skip(skip)
+    .limit(limit);
   return Contacts;
 };
 
