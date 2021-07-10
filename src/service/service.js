@@ -1,4 +1,20 @@
 const { Contact } = require("../db");
+const multer = require("multer");
+
+const getStorage = (fileDir) => {
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, fileDir);
+    },
+    filename: (req, file, cb) => {
+      const [filename, extension] = file.originalname.split(".");
+      cb(null, `${filename}.${extension}`);
+    },
+  });
+  const uploadMiddleware = multer({ storage });
+
+  return uploadMiddleware;
+};
 
 const getData = async (userId, skip, limit) => {
   const Contacts = await Contact.find({ userId })
@@ -41,4 +57,5 @@ module.exports = {
   getAddContact,
   getDeletContact,
   getUpdateContact,
+  getStorage,
 };

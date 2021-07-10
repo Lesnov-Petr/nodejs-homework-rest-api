@@ -4,8 +4,6 @@ const { NotAuthorizedError } = require("../validation");
 const authMiddleware = (req, res, next) => {
   const [, token] = req.headers["authorization"].split(" ");
 
-  console.log(token);
-
   if (!token) {
     next(NotAuthorizedError("Please, provide a token"));
   }

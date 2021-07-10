@@ -5,6 +5,8 @@ const { addContact } = require("./controlersContacts");
 const { updateContact } = require("./controlersContacts");
 const { registrationControler } = require("./authControlers");
 const { loginControler } = require("./authControlers");
+const { uploadController } = require("./filesController");
+const { avatarsController } = require("./filesController");
 
 module.exports = {
   listContacts,
@@ -14,4 +16,6 @@ module.exports = {
   updateContact,
   registrationControler,
   loginControler,
+  uploadController,
+  avatarsController,
 };

@@ -6,6 +6,8 @@ const { connectionMongoDb } = require("./src/db");
 const { HttpCode } = require("./src/HttpCode");
 const contactsRouter = require("./routes/api/contacts.js");
 const authRouter = require("./routes/authRouter");
+const filesRouter = require("./routes/filesRouter");
+
 const app = express();
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
@@ -16,6 +18,7 @@ app.use(express.json());
 
 app.use("/api/contacts", contactsRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/files", filesRouter);
 
 app.use((req, res) => {
   res.status(HttpCode.NOT_FOUND).json({ message: "Not found" });
