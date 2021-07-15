@@ -7,7 +7,7 @@ const {
   getStorage,
 } = require("./service");
 
-const { registration, login } = require("./auth");
+const { registration, registrationConfirmation, login } = require("./auth");
 
 module.exports = {
   getStorage,
@@ -17,5 +17,6 @@ module.exports = {
   getDeletContact,
   getUpdateContact,
   registration,
+  registrationConfirmation,
   login,
 };

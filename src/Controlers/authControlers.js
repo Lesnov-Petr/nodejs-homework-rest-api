@@ -1,4 +1,4 @@
-const { registration, login } = require("../service");
+const { registration, registrationConfirmation, login } = require("../service");
 const { HttpCode } = require("../HttpCode");
 const { schemaAuth, getErrorValidation } = require("../validation");
 
@@ -24,6 +24,18 @@ const registrationControler = async (req, res, next) => {
   }
 };
 
+const registrationConfirmationControler = async (req, res, next) => {
+  try {
+    const { code } = req.params;
+    await registrationConfirmation(code);
+    res.json({
+      status: "success",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const loginControler = async (req, res, next) => {
   try {
     const token = await login(req);
@@ -33,4 +45,8 @@ const loginControler = async (req, res, next) => {
   }
 };
 
-module.exports = { registrationControler, loginControler };
+module.exports = {
+  registrationControler,
+  loginControler,
+  registrationConfirmationControler,
+};

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const gravatar = require("gravatar");
+const { framework } = require("passport");
 
 const userSchema = new mongoose.Schema({
   password: {
@@ -12,6 +13,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  confirm: {
+    type: Boolean,
+    default: false,
   },
   avatarURL: {
     type: String,
